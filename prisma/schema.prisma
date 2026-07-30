@@ -1,0 +1,216 @@
+// ============================================================
+// KucingApps - Prisma Schema (PostgreSQL / Railway)
+// Fasa 1: Skema Database
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------
+// ENUMS
+// ------------------------------------------------------------
+
+enum CatStatus {
+  OWNED           // Ada Tuan
+  STRAY_GUARDIAN  // Liar (Penjaga Blok)
+  TNR             // Mandul / Ear-tipped
+  EMERGENCY       // Kecemasan / Sakit
+}
+
+enum CatRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum FeederStatus {
+  FULL
+  LOW
+  EMPTY
+  NEEDS_ATTENTION
+}
+
+enum DonationType {
+  FOOD
+  LITTER
+  MEDICAL
+  OTHER
+}
+
+// ------------------------------------------------------------
+// USERS & GAMIFICATION
+// ------------------------------------------------------------
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  passwordHash  String?
+  avatarUrl     String?
+  unitNumber    String?  // Unit Apartment, cth "Block A-12-3"
+  block         String?  // Block tempat tinggal
+
+  // Gamification
+  level         Int      @default(1)
+  exp           Int      @default(0)
+  totalDonation Int      @default(0) // jumlah mata "Penderma Komuniti"
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  badges        UserBadge[]
+  sightings     CatSighting[]
+  refills       FeederSpot[]     @relation("LastRefilledBy")
+  refillLogs    FeederRefillLog[]
+  donations     Donation[]
+  cardsAdded    Cat[]            @relation("AddedByUser")
+
+  @@map("users")
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  code        String   @unique // cth "WIRA_SNAPSHOT", "DETEKTIF_BULU", "PAKAR_TNR"
+  name        String
+  description String?
+  iconUrl     String?
+  expReward   Int      @default(0)
+
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+// ------------------------------------------------------------
+// CATS
+// ------------------------------------------------------------
+
+model Cat {
+  id             String     @id @default(cuid())
+  name           String
+  status         CatStatus  @default(STRAY_GUARDIAN)
+  primaryImageUrl String?
+
+  // RPG Stats (0-100)
+  cuteness       Int        @default(50)
+  friendliness   Int        @default(50)
+  chonkiness     Int        @default(50)
+
+  rarity         CatRarity  @default(COMMON)
+  level          Int        @default(1)
+  exp            Int        @default(0)
+
+  earTipped      Boolean    @default(false) // penanda TNR
+
+  // Lokasi terkini (ringkasan; sejarah penuh ada di CatSighting)
+  currentBlock   String?
+  currentArea    String?    // cth "Feeder Spot 2", "Parking Level B1"
+
+  addedByUserId  String?
+  addedBy        User?      @relation("AddedByUser", fields: [addedByUserId], references: [id])
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  sightings      CatSighting[]
+
+  @@map("cats")
+}
+
+model CatSighting {
+  id            String   @id @default(cuid())
+  catId         String
+  userId        String
+
+  locationBlock String   // Block / Level / Area semasa sighting
+  imageUrl      String?
+  note          String?  // ulasan mesra jiran
+
+  timestamp     DateTime @default(now())
+
+  cat           Cat      @relation(fields: [catId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([catId])
+  @@index([userId])
+  @@map("cat_sightings")
+}
+
+// ------------------------------------------------------------
+// FEEDER SPOTS
+// ------------------------------------------------------------
+
+model FeederSpot {
+  id               String       @id @default(cuid())
+  name             String       // cth "Feeder Spot - Block A Tandas Bawah"
+  block            String?
+  locationLat       Float?
+  locationLng       Float?
+
+  status           FeederStatus @default(EMPTY)
+
+  lastRefilledById String?
+  lastRefilledBy   User?        @relation("LastRefilledBy", fields: [lastRefilledById], references: [id])
+  lastRefilledAt   DateTime?
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  refillLogs       FeederRefillLog[]
+
+  @@map("feeder_spots")
+}
+
+model FeederRefillLog {
+  id            String     @id @default(cuid())
+  feederSpotId  String
+  userId        String
+  note          String?
+  timestamp     DateTime   @default(now())
+
+  feederSpot    FeederSpot @relation(fields: [feederSpotId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("feeder_refill_logs")
+}
+
+// ------------------------------------------------------------
+// MONETISASI / SOFT SELLING (Fasa akan datang)
+// ------------------------------------------------------------
+
+model Donation {
+  id           String        @id @default(cuid())
+  userId       String
+  type         DonationType
+  amount       Float?        // jika ada nilai RM
+  affiliateRef String?       // rujukan pautan Group Buy / affiliate
+  expEarned    Int           @default(0)
+
+  createdAt    DateTime      @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("donations")
+}
