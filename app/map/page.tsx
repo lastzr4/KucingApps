@@ -1,11 +1,14 @@
 // Peta Wilayah Interaktif - avatar/sprite kucing mengikut Block/Area
-// TODO: bina komponen peta di /components/map/RegionMap.tsx (Leaflet.js atau Custom SVG Grid)
+// TODO: gantikan MOCK_MAP_PINS dengan sighting terkini dari prisma.catSighting
+
+import RegionMap from "@/components/map/RegionMap";
+import { MOCK_MAP_PINS } from "@/lib/mock-data";
 
 export default function MapPage() {
   return (
     <main className="min-h-screen p-6 text-white">
       <h1 className="text-2xl font-bold mb-4">🗺️ Peta Wilayah</h1>
-      <p className="text-slate-300">Komponen peta akan dipaparkan di sini.</p>
+      <RegionMap cats={MOCK_MAP_PINS} />
     </main>
   );
 }

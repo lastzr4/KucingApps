@@ -24,3 +24,5 @@ npm-debug.log*
 /public/sw.js
 /public/workbox-*.js
 /public/fallback-*.js
+
+# lockfile (regenerate ikut package manager pilihan anda)
