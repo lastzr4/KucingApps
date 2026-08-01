@@ -4,7 +4,7 @@ import SnapTagForm from "@/components/snap/SnapTagForm";
 
 export default function SnapPage() {
   return (
-    <main className="min-h-screen p-6">
+    <main className="min-h-screen p-6 pb-32">
       <h1 className="text-2xl font-display font-bold uppercase tracking-wide mb-4 text-white text-center">
         📸 Snap &amp; Tag
       </h1>
