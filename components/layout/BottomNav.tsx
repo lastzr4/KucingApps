@@ -4,13 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Map, LayoutGrid, Camera, Trophy, User } from "lucide-react";
 
-const TABS = [
-  { href: "/map", label: "Peta", icon: Map },
-  { href: "/cats", label: "Koleksi", icon: LayoutGrid },
+type Tab = {
+  href: string;
+  label: string;
+  icon: typeof Map;
+  isCenter: boolean;
+};
+
+const TABS: Tab[] = [
+  { href: "/map", label: "Peta", icon: Map, isCenter: false },
+  { href: "/cats", label: "Koleksi", icon: LayoutGrid, isCenter: false },
   { href: "/snap", label: "Snap", icon: Camera, isCenter: true },
-  { href: "/quests", label: "Misi", icon: Trophy },
-  { href: "/profile", label: "Saya", icon: User },
-] as const;
+  { href: "/quests", label: "Misi", icon: Trophy, isCenter: false },
+  { href: "/profile", label: "Saya", icon: User, isCenter: false },
+];
 
 export default function BottomNav() {
   const pathname = usePathname();
