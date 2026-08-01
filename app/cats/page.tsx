@@ -10,7 +10,9 @@ export default async function CatsCollectionPage() {
 
   return (
     <main className="min-h-screen p-6 pb-28 text-white">
-      <h1 className="text-2xl font-bold mb-4">🃏 Koleksi Kad Kucing</h1>
+      <h1 className="text-2xl font-display font-bold uppercase tracking-wide mb-4">
+        🃏 Koleksi Kad Kucing
+      </h1>
       <CatCardGrid cats={cats} />
     </main>
   );

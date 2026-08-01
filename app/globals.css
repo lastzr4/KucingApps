@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #0f172a;
+  --color-bg: #0b1024;
 }
 
 html,
@@ -12,12 +12,48 @@ body {
 }
 
 body {
-  /* backdrop kelabu gelap di luar frame "phone" pada skrin besar */
   background-color: #000;
 }
 
 @media (min-width: 640px) {
   body {
-    background: radial-gradient(circle at top, #1e293b 0%, #000 70%);
+    background: radial-gradient(circle at top, #1e2a5e 0%, #05060f 70%);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display), sans-serif;
+  }
+
+  /* Sapuan "shine" merentasi kad - untuk rarity tinggi */
+  .shine-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine-sweep::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 35%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.35),
+      transparent
+    );
+    animation: shimmer 2.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
   }
 }

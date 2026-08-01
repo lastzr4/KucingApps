@@ -30,7 +30,9 @@ export default async function CatDetailPage({ params }: { params: { id: string }
       <SpottingCheckinButton catId={cat.id} />
 
       <section>
-        <h2 className="font-bold text-lg mb-2">📋 Sighting Logs</h2>
+        <h2 className="font-display font-bold uppercase tracking-wide text-amber-400 text-sm mb-2">
+          📋 Sighting Logs
+        </h2>
         {cat.sightings.length === 0 ? (
           <p className="text-slate-400 text-sm">Belum ada sighting direkodkan.</p>
         ) : (

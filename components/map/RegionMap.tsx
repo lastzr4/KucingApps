@@ -51,14 +51,14 @@ export default function RegionMap({
               key={zone.id}
               style={{ gridArea: zone.gridArea }}
               onClick={() => setActiveZone(isActive ? null : zone.id)}
-              className={`relative rounded-xl border-2 flex flex-col items-center justify-center gap-1 p-2 transition-colors ${
+              className={`relative rounded-xl border-2 flex flex-col items-center justify-center gap-1 p-2 transition-all ${
                 isActive
-                  ? "border-amber-400 bg-slate-700"
-                  : "border-slate-600 bg-slate-800 hover:border-slate-400"
+                  ? "border-amber-400 bg-gradient-to-b from-slate-700 to-slate-800 shadow-lg shadow-amber-500/30"
+                  : "border-slate-700 bg-gradient-to-b from-slate-800 to-slate-900 hover:border-amber-400/50"
               }`}
             >
               <span className="text-2xl">{zone.emoji}</span>
-              <span className="text-xs text-slate-200 font-medium text-center">
+              <span className="text-xs text-slate-200 font-display font-medium text-center tracking-wide">
                 {zone.label}
               </span>
 
@@ -88,8 +88,8 @@ export default function RegionMap({
 
       {/* Panel info zon aktif */}
       {activeZone && (
-        <div className="mt-4 max-w-2xl mx-auto rounded-xl bg-slate-800 border border-slate-600 p-4">
-          <h3 className="font-bold text-white mb-2">
+        <div className="mt-4 max-w-2xl mx-auto rounded-xl bg-gradient-to-b from-slate-800 to-slate-900 border border-amber-400/30 p-4">
+          <h3 className="font-display font-bold text-amber-300 uppercase tracking-wide text-sm mb-2">
             {zones.find((z) => z.id === activeZone)?.label}
           </h3>
           {catsInZone(activeZone).length === 0 ? (

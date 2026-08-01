@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Orbitron } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/layout/BottomNav";
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "KucingApps",
@@ -24,9 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ms">
+    <html lang="ms" className={orbitron.variable}>
       <body>
-        <div className="max-w-md mx-auto min-h-screen bg-slate-950 relative shadow-2xl">
+        <div className="max-w-md mx-auto min-h-screen bg-app-gradient relative shadow-2xl overflow-x-hidden">
           {children}
         </div>
         <BottomNav />

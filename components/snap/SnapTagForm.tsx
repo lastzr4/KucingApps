@@ -77,21 +77,28 @@ export default function SnapTagForm() {
   if (state === "success" && result) {
     return (
       <div className="max-w-md mx-auto text-center text-white space-y-4 py-10">
-        <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto" />
-        <h2 className="text-xl font-bold">Berjaya Direkodkan!</h2>
-        <p className="text-slate-300">
-          +{result.expGained} EXP diperoleh. Sekarang Level {result.level} ({result.exp} EXP).
-        </p>
+        <div className="relative rounded-2xl border-2 border-amber-400/50 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 p-6 shine-sweep">
+          <div className="w-16 h-16 rounded-full bg-gold-shine border-2 border-amber-200/70 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/40 animate-glow-legendary">
+            <CheckCircle2 className="w-8 h-8 text-black" />
+          </div>
+          <h2 className="text-xl font-display font-black uppercase tracking-wide mt-3 bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
+            Berjaya Direkodkan!
+          </h2>
+          <p className="text-slate-300 mt-2">
+            <span className="text-amber-400 font-bold">+{result.expGained} EXP</span> diperoleh.
+            Sekarang Level {result.level} ({result.exp} EXP).
+          </p>
+        </div>
         <div className="flex flex-col gap-2 pt-2">
           <Link
             href={`/cats/${result.catId}`}
-            className="bg-amber-500 text-black font-bold px-4 py-2.5 rounded-xl"
+            className="bg-gold-shine text-black font-display font-bold uppercase tracking-wide px-4 py-2.5 rounded-xl shadow-lg shadow-amber-500/30 border border-amber-200/60"
           >
             Lihat Kad Kucing
           </Link>
           <button
             onClick={resetForm}
-            className="flex items-center justify-center gap-2 bg-slate-700 text-white px-4 py-2.5 rounded-xl"
+            className="flex items-center justify-center gap-2 bg-slate-800 border border-slate-700 text-white px-4 py-2.5 rounded-xl"
           >
             <RotateCcw className="w-4 h-4" /> Snap Kucing Lain
           </button>

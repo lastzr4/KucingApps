@@ -12,9 +12,13 @@ export default async function QuestsPage() {
 
   return (
     <main className="min-h-screen p-6 pb-28 text-white">
-      <h1 className="text-2xl font-bold mb-4">🎯 Misi Komuniti</h1>
+      <h1 className="text-2xl font-display font-bold uppercase tracking-wide mb-4">
+        🎯 Misi Komuniti
+      </h1>
 
-      <h2 className="font-bold mb-2 text-sm text-slate-300">🍚 Feeder Spots</h2>
+      <h2 className="font-display font-bold uppercase tracking-wide mb-2 text-sm text-amber-400">
+        🍚 Feeder Spots
+      </h2>
       {feederSpots.length === 0 ? (
         <p className="text-slate-400 text-sm">
           Belum ada Feeder Spot didaftarkan lagi.

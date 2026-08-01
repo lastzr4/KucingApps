@@ -20,7 +20,9 @@ export default async function MapPage() {
 
   return (
     <main className="min-h-screen p-6 pb-28 text-white">
-      <h1 className="text-2xl font-bold mb-4">🗺️ Peta Wilayah</h1>
+      <h1 className="text-2xl font-display font-bold uppercase tracking-wide mb-4">
+        🗺️ Peta Wilayah
+      </h1>
       <RegionMap cats={pins} />
     </main>
   );
