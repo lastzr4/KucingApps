@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import BottomNav from "@/components/layout/BottomNav";
 
 export const metadata: Metadata = {
   title: "KucingApps",
@@ -24,7 +25,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ms">
-      <body>{children}</body>
+      <body>
+        <div className="max-w-md mx-auto min-h-screen bg-slate-950 relative shadow-2xl">
+          {children}
+        </div>
+        <BottomNav />
+      </body>
     </html>
   );
 }

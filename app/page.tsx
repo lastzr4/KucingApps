@@ -1,31 +1,37 @@
+// Home feed - dashboard gaya phone app (navigasi utama guna BottomNav, bukan senarai link browser)
+
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import CatCardGrid from "@/components/cats/CatCardGrid";
 
-const NAV = [
-  { href: "/map", label: "🗺️ Peta Wilayah" },
-  { href: "/cats", label: "🃏 Koleksi Kad Kucing" },
-  { href: "/snap", label: "📸 Snap & Tag" },
-  { href: "/quests", label: "🎯 Misi Komuniti" },
-  { href: "/profile", label: "👤 Profil Saya" },
-];
+export const dynamic = "force-dynamic";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const recentCats = await prisma.cat.findMany({
+    orderBy: { updatedAt: "desc" },
+    take: 4,
+  });
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 text-white">
-      <h1 className="text-3xl font-bold">🐱 KucingApps</h1>
-      <p className="text-slate-400 text-center max-w-md text-sm">
-        Rekod, pantau & uruskan populasi kucing komuniti - gamified!
-      </p>
-      <nav className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm">
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="rounded-xl bg-slate-800 border border-slate-600 hover:border-amber-400 px-4 py-3 text-center font-medium"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+    <main className="min-h-screen p-6 pb-28 text-white space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">🐱 KucingApps</h1>
+        <p className="text-slate-400 text-sm mt-1">
+          Rekod, pantau & uruskan populasi kucing komuniti - gamified!
+        </p>
+      </div>
+
+      <Link
+        href="/snap"
+        className="block text-center bg-amber-500 text-black font-bold py-3 rounded-xl"
+      >
+        📸 Snap Kucing Sekarang
+      </Link>
+
+      <div>
+        <h2 className="font-bold mb-3">Kucing Terkini</h2>
+        <CatCardGrid cats={recentCats} />
+      </div>
     </main>
   );
 }

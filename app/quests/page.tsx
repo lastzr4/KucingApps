@@ -1,10 +1,31 @@
 // Misi Komuniti & EXP - Feeder Spots, Supply Drop, badge tracking
 
-export default function QuestsPage() {
+import { prisma } from "@/lib/prisma";
+import FeederSpotCard from "@/components/quests/FeederSpotCard";
+
+export const dynamic = "force-dynamic";
+
+export default async function QuestsPage() {
+  const feederSpots = await prisma.feederSpot.findMany({
+    orderBy: { name: "asc" },
+  });
+
   return (
-    <main className="min-h-screen p-6 text-white">
+    <main className="min-h-screen p-6 pb-28 text-white">
       <h1 className="text-2xl font-bold mb-4">🎯 Misi Komuniti</h1>
-      <p className="text-slate-300">Senarai misi & Feeder Spots akan dipaparkan di sini.</p>
+
+      <h2 className="font-bold mb-2 text-sm text-slate-300">🍚 Feeder Spots</h2>
+      {feederSpots.length === 0 ? (
+        <p className="text-slate-400 text-sm">
+          Belum ada Feeder Spot didaftarkan lagi.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {feederSpots.map((spot) => (
+            <FeederSpotCard key={spot.id} spot={spot} />
+          ))}
+        </div>
+      )}
     </main>
   );
 }

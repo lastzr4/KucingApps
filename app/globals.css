@@ -6,6 +6,18 @@
   --color-bg: #0f172a;
 }
 
+html,
 body {
-  background-color: var(--color-bg);
+  height: 100%;
+}
+
+body {
+  /* backdrop kelabu gelap di luar frame "phone" pada skrin besar */
+  background-color: #000;
+}
+
+@media (min-width: 640px) {
+  body {
+    background: radial-gradient(circle at top, #1e293b 0%, #000 70%);
+  }
 }

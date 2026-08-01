@@ -1,20 +1,29 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Camera, Upload, MapPin, Loader2, CheckCircle2 } from "lucide-react";
-
-const BLOCKS = ["Block A", "Block B", "Block C", "Feeder Spot 1", "Parking B1"];
+import Link from "next/link";
+import { Camera, Upload, MapPin, Loader2, CheckCircle2, RotateCcw } from "lucide-react";
+import { BLOCKS } from "@/lib/zones";
 
 type SubmitState = "idle" | "uploading" | "success" | "error";
+
+type SubmitResult = {
+  catId: string;
+  expGained: number;
+  level: number;
+  exp: number;
+};
 
 export default function SnapTagForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [catName, setCatName] = useState("");
-  const [block, setBlock] = useState(BLOCKS[0]);
+  const [block, setBlock] = useState(BLOCKS[0].label);
   const [note, setNote] = useState("");
   const [state, setState] = useState<SubmitState>("idle");
+  const [result, setResult] = useState<SubmitResult | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -23,28 +32,72 @@ export default function SnapTagForm() {
     setPreview(URL.createObjectURL(f));
   }
 
+  function resetForm() {
+    setFile(null);
+    setPreview(null);
+    setCatName("");
+    setNote("");
+    setState("idle");
+    setResult(null);
+    setErrorMsg("");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!file) return;
     setState("uploading");
+    setErrorMsg("");
 
     try {
-      // TODO: ganti dengan panggilan sebenar ke /api/sightings
-      // 1. Upload imej ke Cloudinary/Supabase Storage -> dapatkan imageUrl
-      // 2. POST { catName, block, note, imageUrl } ke Prisma (CatSighting / Cat)
       const formData = new FormData();
       formData.append("file", file);
       formData.append("catName", catName);
       formData.append("block", block);
       formData.append("note", note);
 
-      await new Promise((resolve) => setTimeout(resolve, 1200)); // simulasi upload
+      const res = await fetch("/api/sightings", { method: "POST", body: formData });
+      const data = await res.json();
 
+      if (!res.ok) throw new Error(data.error || "Gagal menghantar");
+
+      setResult({
+        catId: data.cat.id,
+        expGained: data.user.expGained,
+        level: data.user.level,
+        exp: data.user.exp,
+      });
       setState("success");
     } catch (err) {
       console.error(err);
+      setErrorMsg(err instanceof Error ? err.message : "Gagal menghantar. Sila cuba lagi.");
       setState("error");
     }
+  }
+
+  if (state === "success" && result) {
+    return (
+      <div className="max-w-md mx-auto text-center text-white space-y-4 py-10">
+        <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto" />
+        <h2 className="text-xl font-bold">Berjaya Direkodkan!</h2>
+        <p className="text-slate-300">
+          +{result.expGained} EXP diperoleh. Sekarang Level {result.level} ({result.exp} EXP).
+        </p>
+        <div className="flex flex-col gap-2 pt-2">
+          <Link
+            href={`/cats/${result.catId}`}
+            className="bg-amber-500 text-black font-bold px-4 py-2.5 rounded-xl"
+          >
+            Lihat Kad Kucing
+          </Link>
+          <button
+            onClick={resetForm}
+            className="flex items-center justify-center gap-2 bg-slate-700 text-white px-4 py-2.5 rounded-xl"
+          >
+            <RotateCcw className="w-4 h-4" /> Snap Kucing Lain
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -94,8 +147,8 @@ export default function SnapTagForm() {
           className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-sm outline-none focus:border-amber-400"
         >
           {BLOCKS.map((b) => (
-            <option key={b} value={b}>
-              {b}
+            <option key={b.zoneId} value={b.label}>
+              {b.label}
             </option>
           ))}
         </select>
@@ -117,16 +170,19 @@ export default function SnapTagForm() {
         disabled={!file || state === "uploading"}
         className="w-full flex items-center justify-center gap-2 bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-black font-bold px-4 py-2.5 rounded-xl"
       >
-        {state === "uploading" && <Loader2 className="w-4 h-4 animate-spin" />}
-        {state === "success" && <CheckCircle2 className="w-4 h-4" />}
-        {state === "idle" && <Upload className="w-4 h-4" />}
-        {state === "success" ? "Berjaya Dihantar! +10 EXP" : "Hantar Sighting"}
+        {state === "uploading" ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" /> Menghantar...
+          </>
+        ) : (
+          <>
+            <Upload className="w-4 h-4" /> Hantar Sighting
+          </>
+        )}
       </button>
 
       {state === "error" && (
-        <p className="text-red-400 text-sm text-center">
-          Gagal menghantar. Sila cuba lagi.
-        </p>
+        <p className="text-red-400 text-sm text-center">{errorMsg}</p>
       )}
     </form>
   );

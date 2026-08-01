@@ -53,3 +53,20 @@ export function expProgress(exp: number, level: number): number {
   const needed = expForNextLevel(level);
   return Math.min(100, Math.round((exp / needed) * 100));
 }
+
+/** Tambah EXP dan kira level baru (naik level ikut expForNextLevel). */
+export function applyExpGain(
+  currentLevel: number,
+  currentExp: number,
+  gained: number
+): { level: number; exp: number } {
+  let level = currentLevel;
+  let exp = currentExp + gained;
+
+  while (exp >= expForNextLevel(level)) {
+    exp -= expForNextLevel(level);
+    level += 1;
+  }
+
+  return { level, exp };
+}
