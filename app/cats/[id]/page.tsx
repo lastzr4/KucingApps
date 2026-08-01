@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import CatCard from "@/components/cats/CatCard";
 import SpottingCheckinButton from "@/components/cats/SpottingCheckinButton";
+import CatStatusEditor from "@/components/cats/CatStatusEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,8 @@ export default async function CatDetailPage({ params }: { params: { id: string }
       </div>
 
       <SpottingCheckinButton catId={cat.id} />
+
+      <CatStatusEditor catId={cat.id} initialStatus={cat.status} />
 
       <section>
         <h2 className="font-display font-bold uppercase tracking-wide text-amber-400 text-sm mb-2">

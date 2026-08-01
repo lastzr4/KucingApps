@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { getOrCreateGuestUser } from "@/lib/session";
 import { applyExpGain } from "@/lib/gamification";
+import { checkSightingBadges } from "@/lib/badges";
 
 const USER_EXP_GAIN = 10;
 const CAT_EXP_GAIN = 5;
@@ -75,6 +76,8 @@ export async function POST(request: NextRequest) {
       data: { level: catProgress.level, exp: catProgress.exp },
     });
 
+    const newBadges = await checkSightingBadges(user.id);
+
     return NextResponse.json({
       success: true,
       cat: { id: cat.id, name: cat.name },
@@ -83,6 +86,7 @@ export async function POST(request: NextRequest) {
         exp: updatedUser.exp,
         expGained: USER_EXP_GAIN,
       },
+      newBadges,
     });
   } catch (err) {
     console.error("[api/sightings] error", err);

@@ -12,6 +12,7 @@ type SubmitResult = {
   expGained: number;
   level: number;
   exp: number;
+  newBadges: { code: string; name: string }[];
 };
 
 export default function SnapTagForm() {
@@ -65,6 +66,7 @@ export default function SnapTagForm() {
         expGained: data.user.expGained,
         level: data.user.level,
         exp: data.user.exp,
+        newBadges: data.newBadges || [],
       });
       setState("success");
     } catch (err) {
@@ -88,6 +90,11 @@ export default function SnapTagForm() {
             <span className="text-amber-400 font-bold">+{result.expGained} EXP</span> diperoleh.
             Sekarang Level {result.level} ({result.exp} EXP).
           </p>
+          {result.newBadges.length > 0 && (
+            <p className="text-amber-300 font-display text-sm mt-2">
+              🏅 Lencana baru: {result.newBadges.map((b) => b.name).join(", ")}!
+            </p>
+          )}
         </div>
         <div className="flex flex-col gap-2 pt-2">
           <Link

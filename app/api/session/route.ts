@@ -4,6 +4,13 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const user = await getOrCreateGuestUser();
+
+  const userBadges = await prisma.userBadge.findMany({
+    where: { userId: user.id },
+    include: { badge: true },
+    orderBy: { earnedAt: "desc" },
+  });
+
   return NextResponse.json({
     id: user.id,
     name: user.name,
@@ -11,6 +18,11 @@ export async function GET() {
     exp: user.exp,
     unitNumber: user.unitNumber,
     block: user.block,
+    badges: userBadges.map((ub) => ({
+      code: ub.badge.code,
+      name: ub.badge.name,
+      description: ub.badge.description,
+    })),
   });
 }
 
@@ -37,6 +49,12 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
+    const userBadges = await prisma.userBadge.findMany({
+      where: { userId: updated.id },
+      include: { badge: true },
+      orderBy: { earnedAt: "desc" },
+    });
+
     return NextResponse.json({
       id: updated.id,
       name: updated.name,
@@ -44,6 +62,11 @@ export async function PATCH(request: NextRequest) {
       exp: updated.exp,
       unitNumber: updated.unitNumber,
       block: updated.block,
+      badges: userBadges.map((ub) => ({
+        code: ub.badge.code,
+        name: ub.badge.name,
+        description: ub.badge.description,
+      })),
     });
   } catch (err) {
     console.error("[api/session PATCH] error", err);

@@ -4,8 +4,10 @@
 // Boleh edit nama, unit & block sendiri (PATCH /api/session)
 
 import { useEffect, useState } from "react";
-import { User as UserIcon, Pencil, Save, X, Loader2 } from "lucide-react";
+import { User as UserIcon, Pencil, Save, X, Loader2, Award } from "lucide-react";
 import { expForNextLevel, expProgress } from "@/lib/gamification";
+
+type BadgeInfo = { code: string; name: string; description: string | null };
 
 type SessionUser = {
   id: string;
@@ -14,6 +16,7 @@ type SessionUser = {
   exp: number;
   unitNumber: string | null;
   block: string | null;
+  badges: BadgeInfo[];
 };
 
 export default function ProfilePage() {
@@ -193,9 +196,32 @@ export default function ProfilePage() {
         <h2 className="font-display font-bold uppercase tracking-wide text-sm text-amber-400 mb-2">
           🏅 Lencana
         </h2>
-        <p className="text-slate-400 text-sm">
-          Belum ada lencana. Mula snap kucing untuk dapatkan lencana pertama!
-        </p>
+        {user.badges.length === 0 ? (
+          <p className="text-slate-400 text-sm">
+            Belum ada lencana. Mula snap kucing untuk dapatkan lencana pertama!
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 gap-2">
+            {user.badges.map((b) => (
+              <div
+                key={b.code}
+                className="flex items-center gap-3 bg-gradient-to-b from-slate-800 to-slate-900 border border-amber-400/30 rounded-xl p-3"
+              >
+                <div className="w-10 h-10 rounded-full bg-gold-shine border-2 border-amber-200/70 flex items-center justify-center shrink-0 shadow shadow-amber-500/30">
+                  <Award className="w-5 h-5 text-black" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-display font-bold text-amber-300 text-sm truncate">
+                    {b.name}
+                  </p>
+                  {b.description && (
+                    <p className="text-slate-400 text-xs truncate">{b.description}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );

@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import FeederSpotCard from "@/components/quests/FeederSpotCard";
+import AddFeederSpotForm from "@/components/quests/AddFeederSpotForm";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,9 @@ export default async function QuestsPage() {
       <h2 className="font-display font-bold uppercase tracking-wide mb-2 text-sm text-amber-400">
         🍚 Feeder Spots
       </h2>
+
+      <AddFeederSpotForm />
+
       {feederSpots.length === 0 ? (
         <p className="text-slate-400 text-sm">
           Belum ada Feeder Spot didaftarkan lagi.
