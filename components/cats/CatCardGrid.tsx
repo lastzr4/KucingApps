@@ -1,4 +1,9 @@
+"use client";
+
+import Link from "next/link";
 import CatCard, { type CatCardData } from "./CatCard";
+import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
+import { playClick } from "@/lib/sound";
 
 export default function CatCardGrid({ cats }: { cats: CatCardData[] }) {
   if (cats.length === 0) {
@@ -12,9 +17,16 @@ export default function CatCardGrid({ cats }: { cats: CatCardData[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {cats.map((cat) => (
-        <a key={cat.id} href={`/cats/${cat.id}`}>
-          <CatCard cat={cat} />
-        </a>
+        <div key={cat.id} className="relative">
+          <Link href={`/cats/${cat.id}`} onClick={() => playClick()}>
+            <CatCard cat={cat} />
+          </Link>
+          <AdminDeleteButton
+            url={`/api/cats/${cat.id}`}
+            confirmMessage={`Padam kucing "${cat.name}" beserta semua sighting log? Tindakan ini tidak boleh diundur.`}
+            className="absolute -bottom-2 -left-2 z-30 w-8 h-8"
+          />
+        </div>
       ))}
     </div>
   );

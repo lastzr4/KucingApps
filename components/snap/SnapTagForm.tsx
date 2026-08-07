@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { BLOCKS } from "@/lib/zones";
 import { checkImageUrlIsCat } from "@/lib/catDetection";
+import { playClick, playSuccess, playError } from "@/lib/sound";
 
 type SubmitState = "idle" | "uploading" | "success" | "error";
 type CatCheckState = "idle" | "checking" | "ok" | "rejected" | "unsure";
@@ -53,11 +54,13 @@ export default function SnapTagForm() {
       if (result.isCat) {
         setCatCheck("ok");
         setCatCheckMsg(`Disahkan kucing (${Math.round(result.confidence * 100)}% yakin)`);
+        playSuccess();
       } else {
         setCatCheck("rejected");
         setCatCheckMsg(
           `Gambar ini nampak seperti "${result.topLabel}", bukan kucing. Sila tekan semula untuk pilih gambar lain.`
         );
+        playError();
       }
     } catch (err) {
       console.error("[catCheck] error", err);
@@ -105,10 +108,12 @@ export default function SnapTagForm() {
         newBadges: data.newBadges || [],
       });
       setState("success");
+      playSuccess();
     } catch (err) {
       console.error(err);
       setErrorMsg(err instanceof Error ? err.message : "Gagal menghantar. Sila cuba lagi.");
       setState("error");
+      playError();
     }
   }
 
@@ -154,7 +159,10 @@ export default function SnapTagForm() {
     <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4 text-white">
       {/* Kawasan snap gambar */}
       <div
-        onClick={() => fileInputRef.current?.click()}
+        onClick={() => {
+          playClick();
+          fileInputRef.current?.click();
+        }}
         className="relative aspect-square w-full rounded-2xl border-2 border-dashed border-slate-600 bg-slate-800 flex items-center justify-center cursor-pointer overflow-hidden"
       >
         {preview ? (

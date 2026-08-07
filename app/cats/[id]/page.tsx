@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import CatCard from "@/components/cats/CatCard";
 import SpottingCheckinButton from "@/components/cats/SpottingCheckinButton";
 import CatStatusEditor from "@/components/cats/CatStatusEditor";
+import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
 
 export const dynamic = "force-dynamic";
 
@@ -42,11 +43,18 @@ export default async function CatDetailPage({ params }: { params: { id: string }
           <ul className="space-y-2">
             {cat.sightings.map((s) => (
               <li key={s.id} className="bg-slate-800 rounded-lg p-3 text-sm">
-                <div className="flex justify-between text-slate-300">
+                <div className="flex justify-between items-start text-slate-300">
                   <span>📍 {s.locationBlock}</span>
-                  <span className="text-slate-500">
-                    {new Date(s.timestamp).toLocaleDateString("ms-MY")}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-500">
+                      {new Date(s.timestamp).toLocaleDateString("ms-MY")}
+                    </span>
+                    <AdminDeleteButton
+                      url={`/api/sightings/${s.id}`}
+                      confirmMessage="Padam sighting log ini?"
+                      className="w-6 h-6"
+                    />
+                  </div>
                 </div>
                 {s.note && <p className="mt-1 text-slate-400">&quot;{s.note}&quot;</p>}
                 <p className="mt-1 text-xs text-slate-500">oleh {s.user.name}</p>
@@ -55,6 +63,14 @@ export default async function CatDetailPage({ params }: { params: { id: string }
           </ul>
         )}
       </section>
+
+      <AdminDeleteButton
+        url={`/api/cats/${cat.id}`}
+        confirmMessage={`Padam kucing "${cat.name}" beserta semua sighting log? Tindakan ini tidak boleh diundur.`}
+        redirectTo="/cats"
+        variant="full"
+        className="w-full"
+      />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Loader2 } from "lucide-react";
 import { BLOCKS } from "@/lib/zones";
+import { playClick, playSuccess, playError } from "@/lib/sound";
 
 export default function AddFeederSpotForm() {
   const router = useRouter();
@@ -30,9 +31,11 @@ export default function AddFeederSpotForm() {
 
       setName("");
       setOpen(false);
+      playSuccess();
       router.refresh();
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Gagal daftar Feeder Spot.");
+      playError();
     } finally {
       setSaving(false);
     }

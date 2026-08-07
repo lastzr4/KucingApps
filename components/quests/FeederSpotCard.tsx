@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Droplets, CheckCircle2, Loader2 } from "lucide-react";
+import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
+import { playClick, playSuccess, playError } from "@/lib/sound";
 
 type FeederStatus = "FULL" | "LOW" | "EMPTY" | "NEEDS_ATTENTION";
 
@@ -24,12 +26,19 @@ export default function FeederSpotCard({ spot }: { spot: FeederSpotData }) {
   const [loading, setLoading] = useState(false);
 
   async function handleRefill() {
+    playClick();
     setLoading(true);
     try {
       const res = await fetch(`/api/feeder-spots/${spot.id}/refill`, { method: "POST" });
-      if (res.ok) setStatus("FULL");
+      if (res.ok) {
+        setStatus("FULL");
+        playSuccess();
+      } else {
+        playError();
+      }
     } catch (err) {
       console.error(err);
+      playError();
     } finally {
       setLoading(false);
     }
@@ -59,6 +68,12 @@ export default function FeederSpotCard({ spot }: { spot: FeederSpotData }) {
         )}
         {status === "FULL" ? "Baru Diisi" : "Saya Dah Isi"}
       </button>
+      <AdminDeleteButton
+        url={`/api/feeder-spots/${spot.id}`}
+        confirmMessage={`Padam Feeder Spot "${spot.name}"?`}
+        variant="full"
+        className="w-full"
+      />
     </div>
   );
 }

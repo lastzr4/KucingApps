@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { STATUS_LABELS, type CatStatus } from "@/lib/gamification";
+import { playClick, playSuccess, playError } from "@/lib/sound";
 
 const STATUS_OPTIONS: CatStatus[] = ["OWNED", "STRAY_GUARDIAN", "TNR", "EMERGENCY"];
 
@@ -21,6 +22,7 @@ export default function CatStatusEditor({
 
   async function handleChange(next: CatStatus) {
     if (next === status) return;
+    playClick();
     setSaving(true);
     setSaved(false);
     setNewBadge(null);
@@ -37,9 +39,11 @@ export default function CatStatusEditor({
 
       setStatus(next);
       setSaved(true);
+      playSuccess();
       if (data.newBadge) setNewBadge(data.newBadge.name);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Gagal kemaskini status.");
+      playError();
     } finally {
       setSaving(false);
     }

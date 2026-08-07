@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Map, LayoutGrid, Camera, Trophy, User } from "lucide-react";
+import { playClick } from "@/lib/sound";
 
 type Tab = {
   href: string;
@@ -34,7 +35,12 @@ export default function BottomNav() {
 
               if (isCenter) {
                 return (
-                  <Link key={href} href={href} className="relative flex flex-col items-center -mt-7">
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => playClick()}
+                    className="relative flex flex-col items-center -mt-7"
+                  >
                     <span className="absolute inset-0 rounded-full animate-fab-ring" />
                     <span className="relative w-14 h-14 rounded-full bg-gold-shine border-2 border-amber-200/70 flex items-center justify-center shadow-lg shadow-amber-500/50">
                       <Icon className="w-6 h-6 text-black" strokeWidth={2.5} />
@@ -47,6 +53,7 @@ export default function BottomNav() {
                 <Link
                   key={href}
                   href={href}
+                  onClick={() => playClick()}
                   className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
                     active ? "text-amber-400" : "text-slate-500"
                   }`}

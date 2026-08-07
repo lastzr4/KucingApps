@@ -4,8 +4,10 @@
 // Boleh edit nama, unit & block sendiri (PATCH /api/session)
 
 import { useEffect, useState } from "react";
-import { User as UserIcon, Pencil, Save, X, Loader2, Award } from "lucide-react";
+import { User as UserIcon, Pencil, Save, X, Loader2, Award, ShieldCheck } from "lucide-react";
 import { expForNextLevel, expProgress } from "@/lib/gamification";
+import { getAdminSecret, setAdminSecret, clearAdminSecret } from "@/lib/adminClient";
+import { playClick, playSuccess } from "@/lib/sound";
 
 type BadgeInfo = { code: string; name: string; description: string | null };
 
@@ -26,6 +28,26 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", unitNumber: "", block: "" });
   const [errorMsg, setErrorMsg] = useState("");
+  const [adminActive, setAdminActive] = useState(false);
+  const [adminInput, setAdminInput] = useState("");
+
+  useEffect(() => {
+    setAdminActive(!!getAdminSecret());
+  }, []);
+
+  function handleActivateAdmin() {
+    if (!adminInput.trim()) return;
+    setAdminSecret(adminInput.trim());
+    setAdminActive(true);
+    setAdminInput("");
+    playSuccess();
+  }
+
+  function handleDeactivateAdmin() {
+    clearAdminSecret();
+    setAdminActive(false);
+    playClick();
+  }
 
   function loadSession() {
     setLoading(true);
@@ -220,6 +242,39 @@ export default function ProfilePage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-4 space-y-2">
+        <h2 className="font-display font-bold uppercase tracking-wide text-sm text-slate-400 flex items-center gap-1.5">
+          <ShieldCheck className="w-4 h-4" /> Mod Admin
+        </h2>
+        {adminActive ? (
+          <div className="flex items-center justify-between">
+            <span className="text-emerald-400 text-sm">Admin aktif ✓</span>
+            <button
+              onClick={handleDeactivateAdmin}
+              className="text-xs text-slate-400 underline"
+            >
+              Log keluar
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <input
+              type="password"
+              value={adminInput}
+              onChange={(e) => setAdminInput(e.target.value)}
+              placeholder="Kata laluan admin"
+              className="flex-1 rounded-lg bg-slate-800/80 border border-slate-600 px-3 py-1.5 text-sm outline-none focus:border-amber-400"
+            />
+            <button
+              onClick={handleActivateAdmin}
+              className="px-3 rounded-lg bg-slate-700 text-white text-xs font-bold"
+            >
+              Aktifkan
+            </button>
           </div>
         )}
       </div>

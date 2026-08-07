@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { playClick, playSuccess, playError } from "@/lib/sound";
 
 export default function SpottingCheckinButton({ catId }: { catId: string }) {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [expGained, setExpGained] = useState(0);
 
   async function handleClick() {
+    playClick();
     setState("loading");
     try {
       const res = await fetch(`/api/cats/${catId}/checkin`, { method: "POST" });
@@ -15,9 +17,11 @@ export default function SpottingCheckinButton({ catId }: { catId: string }) {
       if (!res.ok) throw new Error(data.error || "Gagal check-in");
       setExpGained(data.user.expGained);
       setState("done");
+      playSuccess();
     } catch (err) {
       console.error(err);
       setState("error");
+      playError();
     }
   }
 
