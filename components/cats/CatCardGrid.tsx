@@ -3,7 +3,7 @@
 import Link from "next/link";
 import CatCard, { type CatCardData } from "./CatCard";
 import AdminDeleteButton from "@/components/admin/AdminDeleteButton";
-import { playClick } from "@/lib/sound";
+import { playMeow } from "@/lib/sound";
 
 export default function CatCardGrid({ cats }: { cats: CatCardData[] }) {
   if (cats.length === 0) {
@@ -18,7 +18,7 @@ export default function CatCardGrid({ cats }: { cats: CatCardData[] }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {cats.map((cat) => (
         <div key={cat.id} className="relative">
-          <Link href={`/cats/${cat.id}`} onClick={() => playClick()}>
+          <Link href={`/cats/${cat.id}`} onClick={() => playMeow()}>
             <CatCard cat={cat} />
           </Link>
           <AdminDeleteButton
